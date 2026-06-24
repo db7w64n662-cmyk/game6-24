@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>《心跳的二重奏》- 經典日系網頁 GALGAME</title>
+  <!-- 引入 Google FontsOutfit 和 Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 遊戲主背景容器 -->
+  <div id="game-container" class="bg-transition">
+    
+    <!-- 1. 主選單 (Title Screen) -->
+    <div id="title-screen" class="screen active">
+      <div class="title-overlay">
+        <h1 class="game-logo">心跳的二重奏</h1>
+        <p class="game-subtitle">Heartbeat Duet</p>
+        <div class="menu-buttons">
+          <button id="btn-start-nijika" class="menu-btn premium-btn">進入虹夏路線</button>
+          <button id="btn-start-kotone" class="menu-btn premium-btn">進入琴音路線</button>
+          <button id="btn-start-extra" class="menu-btn premium-btn special-btn">進入番外篇 (需要 CG)</button>
+          <button id="btn-title-load" class="menu-btn secondary-btn">讀取進度</button>
+        </div>
+        <div class="title-footer">
+          <p>© 2026 Heartbeat Duet Project. All Rights Reserved.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 遊戲主畫面 (Adventure Screen) -->
+    <div id="adventure-screen" class="screen">
+      
+      <!-- 頂部資訊列 -->
+      <div class="top-bar">
+        <div id="chapter-title" class="chapter-badge">第一幕：比身高與黏人宣告</div>
+        <div class="quick-menu">
+          <button id="btn-quick-log" class="icon-btn">Log 歷史</button>
+          <button id="btn-quick-save" class="icon-btn">Save 存檔</button>
+          <button id="btn-quick-load" class="icon-btn">Load 讀檔</button>
+          <button id="btn-back-main" class="icon-btn danger-btn">回主選單</button>
+        </div>
+      </div>
+
+      <!-- 角色立繪展示區 -->
+      <div class="character-stage">
+        <!-- 虹夏立繪 -->
+        <div id="char-nijika" class="sprite-container left-side">
+          <img id="img-nijika" class="sprite-img" src="" alt="虹夏" onerror="this.style.display='none'">
+          <div class="placeholder-sprite">虹夏立繪<br>(未放入)</div>
+        </div>
+        <!-- 琴音立繪 -->
+        <div id="char-kotone" class="sprite-container right-side">
+          <img id="img-kotone" class="sprite-img" src="" alt="琴音" onerror="this.style.display='none'">
+          <div class="placeholder-sprite">琴音立繪<br>(未放入)</div>
+        </div>
+      </div>
+
+      <!-- 劇情選項遮罩層 (分支點彈出) -->
+      <div id="choices-overlay" class="choices-container">
+        <div class="choices-box">
+          <p id="choice-question" class="choice-title">宇恩看著懷裡黏人的虹夏，此時應該……</p>
+          <div id="choices-list" class="choices-buttons-list">
+            <!-- 動態生成按鈕 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 對話框區域 (磨砂玻璃面板) -->
+      <div class="dialogue-area-wrapper">
+        <div id="dialogue-box" class="dialogue-box">
+          <!-- 名字框 -->
+          <div id="name-box" class="name-box">宇恩</div>
+          <!-- 對話文字內容 -->
+          <div class="text-content">
+            <p id="dialogue-text">對話載入中...</p>
+          </div>
+          <!-- 點擊繼續提示箭頭 -->
+          <div class="next-indicator">▼</div>
+        </div>
+        
+        <!-- 對話框底部的控制按鈕列 -->
+        <div class="control-panel">
+          <button id="ctrl-auto" class="ctrl-btn">AUTO</button>
+          <button id="ctrl-skip" class="ctrl-btn">SKIP</button>
+          <button id="ctrl-log" class="ctrl-btn">LOG</button>
+          <button id="ctrl-save" class="ctrl-btn">SAVE</button>
+          <button id="ctrl-load" class="ctrl-btn">LOAD</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 3. 歷史紀錄回顧 (Log Overlay) -->
+    <div id="log-overlay" class="overlay">
+      <div class="overlay-card log-card">
+        <div class="overlay-header">
+          <h2>歷史對話紀錄 (Log)</h2>
+          <button id="btn-close-log" class="close-btn">&times;</button>
+        </div>
+        <div id="log-content" class="log-scroll-area">
+          <!-- 動態載入歷史對話 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 存檔與讀檔介面 (Save/Load Overlay) -->
+    <div id="saveload-overlay" class="overlay">
+      <div class="overlay-card slots-card">
+        <div class="overlay-header">
+          <h2 id="saveload-title">儲存進度 (Save)</h2>
+          <button id="btn-close-slots" class="close-btn">&times;</button>
+        </div>
+        <div class="slots-grid">
+          <!-- Slot 1 -->
+          <div class="slot-item" data-slot="1">
+            <div class="slot-number">SLOT 01</div>
+            <div class="slot-info">
+              <span class="slot-chapter">空存檔</span>
+              <span class="slot-time">-</span>
+            </div>
+            <div class="slot-action-overlay">
+              <button class="slot-btn btn-slot-action">存檔</button>
+            </div>
+          </div>
+          <!-- Slot 2 -->
+          <div class="slot-item" data-slot="2">
+            <div class="slot-number">SLOT 02</div>
+            <div class="slot-info">
+              <span class="slot-chapter">空存檔</span>
+              <span class="slot-time">-</span>
+            </div>
+            <div class="slot-action-overlay">
+              <button class="slot-btn btn-slot-action">存檔</button>
+            </div>
+          </div>
+          <!-- Slot 3 -->
+          <div class="slot-item" data-slot="3">
+            <div class="slot-number">SLOT 03</div>
+            <div class="slot-info">
+              <span class="slot-chapter">空存檔</span>
+              <span class="slot-time">-</span>
+            </div>
+            <div class="slot-action-overlay">
+              <button class="slot-btn btn-slot-action">存檔</button>
+            </div>
+          </div>
+          <!-- Slot 4 -->
+          <div class="slot-item" data-slot="4">
+            <div class="slot-number">SLOT 04</div>
+            <div class="slot-info">
+              <span class="slot-chapter">空存檔</span>
+              <span class="slot-time">-</span>
+            </div>
+            <div class="slot-action-overlay">
+              <button class="slot-btn btn-slot-action">存檔</button>
+            </div>
+          </div>
+          <!-- Slot 5 -->
+          <div class="slot-item" data-slot="5">
+            <div class="slot-number">SLOT 05</div>
+            <div class="slot-info">
+              <span class="slot-chapter">空存檔</span>
+              <span class="slot-time">-</span>
+            </div>
+            <div class="slot-action-overlay">
+              <button class="slot-btn btn-slot-action">存檔</button>
+            </div>
+          </div>
+          <!-- Slot 6 -->
+          <div class="slot-item" data-slot="6">
+            <div class="slot-number">SLOT 06</div>
+            <div class="slot-info">
+              <span class="slot-chapter">空存檔</span>
+              <span class="slot-time">-</span>
+            </div>
+            <div class="slot-action-overlay">
+              <button class="slot-btn btn-slot-action">存檔</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 引入劇本與核心引擎 -->
+  <script src="script_data.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
